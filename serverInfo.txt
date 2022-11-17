@@ -1,0 +1,2 @@
+- We refactored the code to that we have different files or folders for different parts of the application like code related to
+the server, express and the middlewares. 
