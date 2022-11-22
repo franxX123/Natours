@@ -29,6 +29,7 @@ class APIFeatures {
   sort() {
     // 2.) Sorting: Sorts by a given attribute
     if (this.responseQuery.sort) {
+      // DEBUG
       const sortBy = this.responseQuery.sort.split(',').join(' ');
       // NOTE: query.sort() allows us to sort by giving an object
       // of the form {attributeName1 attributeName2 ...}
