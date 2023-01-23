@@ -1,6 +1,7 @@
-const Tour = require(`${__dirname}/../models/tourModel`);
-const APIFeatures = require(`${__dirname}/../utils/apiFeatures`);
-const catchAsync = require('./../utils/catchAsync');
+const Tour = require(`./../models/tourModel`);
+const APIFeatures = require(`./../utils/apiFeatures`);
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
 module.exports.getTourAlias = (req, res, next) => {
   req.query = {
@@ -33,6 +34,10 @@ module.exports.getTour = catchAsync(async (req, res, next) => {
   // in the url used to get a specific tour
   const tour = await Tour.findById(req.params.id);
 
+  if (!tour) {
+    throw new AppError(`No tour found for the tour ID ${req.params.id}`, 404);
+  }
+
   res.status(200).json({
     status: 'success',
     data: { tour },
@@ -50,21 +55,29 @@ module.exports.createTour = catchAsync(async (req, res, next) => {
 
 module.exports.updateTour = catchAsync(async (req, res, next) => {
   // method params: id, data used to update the tour of id, options (like return the new tour or use a validator)
-  const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     // this allows us to run validators when we are updating.
     runValidators: true,
   });
 
+  if (!tour) {
+    throw new AppError(`No tour found for the tour ID ${req.params.id}`, 404);
+  }
+
   res.status(201).json({
     status: 'success',
     message: '<Update successful...>',
-    tour: updatedTour,
+    tour: tour,
   });
 });
 
 module.exports.deleteTour = catchAsync(async (req, res, next) => {
-  await Tour.findByIdAndDelete(req.params.id);
+  const tour = await Tour.findByIdAndDelete(req.params.id);
+
+  if (!tour) {
+    throw new AppError(`No tour found for the tour ID ${req.params.id}`, 404);
+  }
 
   res.status(204).json({
     status: 'success',
